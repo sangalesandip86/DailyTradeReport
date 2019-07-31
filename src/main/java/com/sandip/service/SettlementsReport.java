@@ -35,9 +35,13 @@ public class SettlementsReport {
 	private List<TradeInstruction> tradeInstructions;
 
 	public static void main(String[] args) {
-		SettlementsReport settlementsReport = new SettlementsReport(TradeReportUtil.populateTradeInstructions());
-		settlementsReport.dailyIncomingOutgoingReport();
-		settlementsReport.rankingOfEntitiesReport();
+		try {
+			SettlementsReport settlementsReport = new SettlementsReport(TradeReportUtil.populateTradeInstructions());
+			settlementsReport.dailyIncomingOutgoingReport();
+			settlementsReport.rankingOfEntitiesReport();
+		} catch (IllegalArgumentException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	/**
