@@ -43,7 +43,7 @@ public class TradeReportUtil {
 
 	public static void shouldBeNonNegative(Double... numbers) {
 		for (Double number : numbers) {
-			if (number < 0) {
+			if (number < 0 || number == 0.0) {
 				throw new IllegalArgumentException(SHOULD_BE_POSITIVE);
 			}
 		}

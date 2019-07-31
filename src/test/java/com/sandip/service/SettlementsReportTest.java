@@ -1,36 +1,58 @@
 package com.sandip.service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import com.sandip.enums.CurrencyType;
 import com.sandip.enums.TransactionType;
 import com.sandip.model.TradeInstruction;
 
-public class SettlementsTest {
-	
-	private static Settlements settlements;
+public class SettlementsReportTest {
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
+
+	private static SettlementsReport settlementsReport;
 	
 	private static final LocalDate INSTRUCTION_DATE = LocalDate.of(2019, Month.JULY, 31);
 
 	private static final LocalDate SETTLEMENT_DATE = LocalDate.of(2019, Month.JULY, 31);
 	private static final LocalDate SETTLEMENT_DATE_SATURDAY = LocalDate.of(2019, Month.JULY, 27);
 	private static final LocalDate SETTLEMENT_DATE_MONDAY = LocalDate.of(2019, Month.AUGUST, 01);
-
-	@Before
-	public void setUp() throws IOException {
-		settlements = new Settlements();
+	private List<TradeInstruction> tradeInstructions = populateTradeInstructions();;
+	
+	@Test
+	public void testSettlementsReportArgumentNull() {
+		
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("TradeInstruction list should not be null");
+		
+		settlementsReport = new SettlementsReport(null);
+	}
+	
+	@Test
+	public void testDailyIncomingOutgoingReport() {
+		// Given
+		settlementsReport = new SettlementsReport(this.tradeInstructions);
+		// When
+		settlementsReport.dailyIncomingOutgoingReport();
+	}
+	
+	@Test
+	public void testRankingOfEntitiesReport() {
+		// Given
+		settlementsReport = new SettlementsReport(this.tradeInstructions);
+		// When
+		settlementsReport.rankingOfEntities();
 	}
 
-	@Test
-	public void testSettleDailyTrade() {
-		// Given
+	private List<TradeInstruction> populateTradeInstructions() {
 		List<TradeInstruction> tradeInstructions = new ArrayList<>();
 
 		TradeInstruction tradeInstruction = new TradeInstruction("Doo", TransactionType.BUY, CurrencyType.INR, 1.0,
@@ -52,10 +74,7 @@ public class SettlementsTest {
 		tradeInstruction = new TradeInstruction("Foo", TransactionType.SELL, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE_MONDAY, 1, 116.0);
 		tradeInstructions.add(tradeInstruction);
-		// When
-		settlements.settleTradeInstructions(tradeInstructions);
-		// Then
-
+		return tradeInstructions;
 	}
 
 }

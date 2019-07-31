@@ -60,6 +60,16 @@ public class TradeReportUtilTest {
 		// Then
 		assertEquals(LocalDate.of(2019, 07, 28), actualSettlementDate);
 	}
+	
+	@Test
+	public void testSettlementDateSundayIsValidWeekDayWhenCurrencySGP() {
+		// Given
+		LocalDate settlementDate = SETTLEMENT_DATE_SUNDAY;
+		// When
+		LocalDate actualSettlementDate = TradeReportUtil.workingDayOfSettlementDate(settlementDate, CurrencyType.SGP);
+		// Then
+		assertEquals(LocalDate.of(2019, 07, 28), actualSettlementDate);
+	}
 
 	@Test
 	public void testshouldBeNonNegativeAllPositive() {
@@ -80,6 +90,32 @@ public class TradeReportUtilTest {
 		// When
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Price, Unit, AgreedFx should be valid positive number");
+
+		TradeReportUtil.shouldBeNonNegative(price, units, agreedFX);
+
+	}
+	
+	@Test
+	public void testShouldBeNonNegativeThrowExceptionIfZero() {
+		// Given
+		Double price = 100.0;
+		Double units = 0.0;
+		Double agreedFX = 1.2;
+		// When
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("Price, Unit, AgreedFx should be valid positive number");
+
+		TradeReportUtil.shouldBeNonNegative(price, units, agreedFX);
+
+	}
+	
+	@Test
+	public void testAboveZero() {
+		// Given
+		Double price = 0.1;
+		Double units = 0.01;
+		Double agreedFX = 0.1;
+		// When
 
 		TradeReportUtil.shouldBeNonNegative(price, units, agreedFX);
 

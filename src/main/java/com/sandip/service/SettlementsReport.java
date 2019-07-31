@@ -19,34 +19,45 @@ import com.sandip.utils.TradeReportUtil;
  * @author sandip.p.sangale
  *
  */
-public class Settlements {
+public class SettlementsReport {
 
+	private static final String TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL = "TradeInstruction list should not be null";
 	private static final String REPORT_HEADER_PRINT_FORMAT = "%-20s %-20s%n";
-	DecimalFormat df = new DecimalFormat("0.00");
+	private static final DecimalFormat df = new DecimalFormat("0.00");
+	private List<TradeInstruction> tradeInstructions;
 
 	/**
-	 * Accepts List of Trade Instruction in list format and process them one by one
-	 * Also calculate and set working day of settlementDate
+	 * Accepts List of TradeInstruction and apply SettlementDate weekdays logic on
+	 * each tradeInstruction object
 	 * 
 	 * @param tradeInstructions
 	 */
-	public void settleTradeInstructions(List<TradeInstruction> tradeInstructions) {
-		// For each TradeInstruction If settlement date falls on weekend then set it to
-		// Next working day
-		tradeInstructions.stream().forEach(tradeInstruction -> tradeInstruction.setSettlementDate(TradeReportUtil
-				.workingDayOfSettlementDate(tradeInstruction.getSettlementDate(), tradeInstruction.getCurrencyType())));
-
-		dailyIncomingOutgoingReport(tradeInstructions);
-		rankingOfEntities(tradeInstructions);
+	public SettlementsReport(final List<TradeInstruction> tradeInstructions) {
+		if (tradeInstructions == null) {
+			throw new IllegalArgumentException(TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL);
+		}
+		this.tradeInstructions = tradeInstructions;
+		this.calculateValidWeekdayForSettlementDate();
 	}
 
 	/**
-	 * This methods Group by TransactionType and Settlement Date and summing of tradeAmount Settlement date wise
+	 * Calculate and set valid working day of settlementDate based on currency Type
 	 * 
 	 * @param tradeInstructions
 	 */
-	private void dailyIncomingOutgoingReport(List<TradeInstruction> tradeInstructions) {
-		Map<TransactionType, Map<LocalDate, Double>> tradeEachDay = tradeInstructions.stream()
+	private void calculateValidWeekdayForSettlementDate() {
+		// For each TradeInstruction If settlement date falls on weekend then set it to
+		// Next working day
+		this.tradeInstructions.stream().forEach(tradeInstruction -> tradeInstruction.setSettlementDate(TradeReportUtil
+				.workingDayOfSettlementDate(tradeInstruction.getSettlementDate(), tradeInstruction.getCurrencyType())));
+	}
+
+	/**
+	 * This methods Group by TransactionType and Settlement Date and summing of
+	 * tradeAmount Settlement date wise
+	 */
+	public void dailyIncomingOutgoingReport() {
+		Map<TransactionType, Map<LocalDate, Double>> tradeEachDay = this.tradeInstructions.stream()
 				.collect(Collectors.groupingBy(TradeInstruction::getTransactionType,
 						Collectors.groupingBy(TradeInstruction::getSettlementDate,
 								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
@@ -55,6 +66,11 @@ public class Settlements {
 		displayDaywiseIncomingOutgoingTrade(tradeEachDay, TransactionType.SELL);
 	}
 
+	/**
+	 * 
+	 * @param tradeEachDay
+	 * @param transactionType
+	 */
 	private void displayDaywiseIncomingOutgoingTrade(Map<TransactionType, Map<LocalDate, Double>> tradeEachDay,
 			TransactionType transactionType) {
 		printIncomingOutgoingReportHeaders(transactionType);
@@ -62,6 +78,11 @@ public class Settlements {
 				.printf(REPORT_HEADER_PRINT_FORMAT, settlementDate, "$" + df.format(amount)));
 	}
 
+	/**
+	 * prints Incoming/Outgoing Header to console
+	 * 
+	 * @param transactionType
+	 */
 	private void printIncomingOutgoingReportHeaders(TransactionType transactionType) {
 		System.out.println();
 		if (TransactionType.BUY.equals(transactionType)) {
@@ -75,8 +96,12 @@ public class Settlements {
 		System.out.printf(REPORT_HEADER_PRINT_FORMAT, "---------------", "-------");
 	}
 
-	private void rankingOfEntities(List<TradeInstruction> tradeInstructions) {
-		Map<TransactionType, Map<String, Double>> tradeEachDay = tradeInstructions.stream()
+	/**
+	 * Group TradeInstruction entity wise and rank them in decreasing order of sum
+	 * of tradeAmountInUSD
+	 */
+	public void rankingOfEntities() {
+		Map<TransactionType, Map<String, Double>> tradeEachDay = this.tradeInstructions.stream()
 				.collect(Collectors.groupingBy(TradeInstruction::getTransactionType,
 						Collectors.groupingBy(TradeInstruction::getEntity,
 								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
@@ -84,6 +109,12 @@ public class Settlements {
 		tradeEachDay.forEach(this::tradeAmountWiseRankingOfEntities);
 	}
 
+	/**
+	 * Sort Entity tradeAmountInUSD in descending order and print values to console
+	 * 
+	 * @param transactionType
+	 * @param entityTradeAmountMap
+	 */
 	private void tradeAmountWiseRankingOfEntities(TransactionType transactionType,
 			Map<String, Double> entityTradeAmountMap) {
 		printRankingReportHeader(transactionType);
@@ -95,6 +126,11 @@ public class Settlements {
 		});
 	}
 
+	/**
+	 * prints Ranking Report Header to console
+	 * 
+	 * @param transactionType
+	 */
 	private void printRankingReportHeader(TransactionType transactionType) {
 		System.out.println();
 		if (TransactionType.BUY.equals(transactionType)) {
