@@ -2,13 +2,14 @@ package com.sandip.model;
 
 import java.time.LocalDate;
 
-import com.sandip.enums.BuySell;
-import com.sandip.enums.Currency;
+import com.sandip.enums.CurrencyType;
+import com.sandip.enums.TransactionType;
+import com.sandip.utils.TradeReportUtil;
 
 public class TradeInstruction {
 	private String entity;
-	private BuySell buySell;
-	private Currency currency;
+	private TransactionType transactionType;
+	private CurrencyType currencyType;
 	private Double agreedFx;
 	private LocalDate instructionDate;
 	private LocalDate settlementDate;
@@ -23,12 +24,12 @@ public class TradeInstruction {
 		this.entity = entity;
 	}
 
-	public Currency getCurrency() {
-		return currency;
+	public CurrencyType getCurrencyType() {
+		return currencyType;
 	}
 
-	public void setCurrency(Currency currency) {
-		this.currency = currency;
+	public void setCurrencyType(CurrencyType currencyType) {
+		this.currencyType = currencyType;
 	}
 
 	public Double getAgreedFx() {
@@ -67,16 +68,40 @@ public class TradeInstruction {
 		return pricePerUnit;
 	}
 
+	/**
+	 * @param entity
+	 * @param transactionType
+	 * @param currency
+	 * @param agreedFx
+	 * @param instructionDate
+	 * @param settlementDate
+	 * @param units
+	 * @param pricePerUnit
+	 */
+	public TradeInstruction(String entity, TransactionType transactionType, CurrencyType currency, Double agreedFx,
+			LocalDate instructionDate, LocalDate settlementDate, int units, Double pricePerUnit) {
+		super();
+		TradeReportUtil.shouldBeNonNegative(agreedFx, (double) units, pricePerUnit);
+		this.entity = entity;
+		this.transactionType = transactionType;
+		this.currencyType = currency;
+		this.agreedFx = agreedFx;
+		this.instructionDate = instructionDate;
+		this.settlementDate = settlementDate;
+		this.units = units;
+		this.pricePerUnit = pricePerUnit;
+	}
+
 	public void setPricePerUnit(Double pricePerUnit) {
 		this.pricePerUnit = pricePerUnit;
 	}
 
-	public BuySell getBuySell() {
-		return buySell;
+	public TransactionType getTransactionType() {
+		return transactionType;
 	}
 
-	public void setBuySell(BuySell buySell) {
-		this.buySell = buySell;
+	public void setTransactionType(TransactionType transactionType) {
+		this.transactionType = transactionType;
 	}
 
 	/**
@@ -84,7 +109,8 @@ public class TradeInstruction {
 	 * 
 	 * @return
 	 */
-	public Double calculateUSDAmountOfTrade() {
+	public Double calculateTradeAmountInUSD() {
 		return this.pricePerUnit * units * agreedFx;
 	}
+
 }
