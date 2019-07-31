@@ -52,4 +52,5 @@ public class TradeReportUtil {
 	private TradeReportUtil() {
 		// Private Constructor
 	}
+
 }

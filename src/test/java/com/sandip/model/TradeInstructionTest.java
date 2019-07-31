@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 
 import com.sandip.enums.CurrencyType;
 import com.sandip.enums.TransactionType;
+import com.sandip.utils.TradeFormulaes;
 
 /**
  * 
@@ -45,7 +46,7 @@ public class TradeInstructionTest {
 		TradeInstruction tradeInstruction = new TradeInstruction("Foo", TransactionType.BUY, CurrencyType.INR, 1.2,
 				LocalDate.of(2019, 07, 31), LocalDate.of(2019, 8, 01), 1, 123.0);
 		// when
-		Double tradeAmountInUSD = tradeInstruction.calculateTradeAmountInUSD();
+		Double tradeAmountInUSD = TradeFormulaes.TRADE_AMOUNT_IN_USD.applyAsDouble(tradeInstruction);
 		// Then
 		assertEquals(147.6, tradeAmountInUSD, 0);
 	}

@@ -5,7 +5,12 @@ import java.time.LocalDate;
 import com.sandip.enums.CurrencyType;
 import com.sandip.enums.TransactionType;
 import com.sandip.utils.TradeReportUtil;
-
+/**
+ * This class holds transaction instruction information sent by clients
+ * 
+ * @author sandip.p.sangale
+ *
+ */
 public class TradeInstruction {
 	private String entity;
 	private TransactionType transactionType;
@@ -69,6 +74,8 @@ public class TradeInstruction {
 	}
 
 	/**
+	 * 
+	 * 
 	 * @param entity
 	 * @param transactionType
 	 * @param currency
@@ -102,15 +109,6 @@ public class TradeInstruction {
 
 	public void setTransactionType(TransactionType transactionType) {
 		this.transactionType = transactionType;
-	}
-
-	/**
-	 * USD amount of a trade = Price per unit * Units * Agreed Fx
-	 * 
-	 * @return
-	 */
-	public Double calculateTradeAmountInUSD() {
-		return this.pricePerUnit * units * agreedFx;
 	}
 
 }
