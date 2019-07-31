@@ -1,5 +1,5 @@
 package com.sandip.enums;
 
-public enum TransactionType {
+public enum InstructionType {
 	BUY, SELL
 }

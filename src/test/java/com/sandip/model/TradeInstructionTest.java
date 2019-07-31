@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.sandip.enums.CurrencyType;
-import com.sandip.enums.TransactionType;
+import com.sandip.enums.InstructionType;
 import com.sandip.utils.TradeFormulaes;
 
 /**
@@ -25,7 +25,7 @@ public class TradeInstructionTest {
 
 	@Test
 	public void testTradeInstructionObjectCreatedSuccesfully() {
-		TradeInstruction tradeInstruction = new TradeInstruction("Foo", TransactionType.BUY, CurrencyType.INR, 1.2,
+		TradeInstruction tradeInstruction = new TradeInstruction("Foo", InstructionType.BUY, CurrencyType.INR, 1.2,
 				LocalDate.of(2019, 07, 31), LocalDate.of(2019, 8, 01), 1, 123.0);
 		assertNotNull(tradeInstruction);
 	}
@@ -35,7 +35,7 @@ public class TradeInstructionTest {
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("Price, Unit, AgreedFx should be valid positive number");
 
-		new TradeInstruction("Foo", TransactionType.BUY, CurrencyType.INR, -1.0, LocalDate.of(2019, 07, 31),
+		new TradeInstruction("Foo", InstructionType.BUY, CurrencyType.INR, -1.0, LocalDate.of(2019, 07, 31),
 				LocalDate.of(2019, 8, 01), 1, 123.0);
 
 	}
@@ -43,7 +43,7 @@ public class TradeInstructionTest {
 	@Test
 	public void testCalculateUSDAmountOfTrade() {
 		// Given
-		TradeInstruction tradeInstruction = new TradeInstruction("Foo", TransactionType.BUY, CurrencyType.INR, 1.2,
+		TradeInstruction tradeInstruction = new TradeInstruction("Foo", InstructionType.BUY, CurrencyType.INR, 1.2,
 				LocalDate.of(2019, 07, 31), LocalDate.of(2019, 8, 01), 1, 123.0);
 		// when
 		Double tradeAmountInUSD = TradeFormulaes.TRADE_AMOUNT_IN_USD.applyAsDouble(tradeInstruction);

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import com.sandip.enums.CurrencyType;
-import com.sandip.enums.TransactionType;
+import com.sandip.enums.InstructionType;
 import com.sandip.model.TradeInstruction;
 
 public class TradeReportUtil {
@@ -61,23 +61,23 @@ public class TradeReportUtil {
 	public static List<TradeInstruction> populateTradeInstructions() {
 		List<TradeInstruction> tradeInstructions = new ArrayList<>();
 
-		TradeInstruction tradeInstruction = new TradeInstruction("Doo", TransactionType.BUY, CurrencyType.INR, 1.0,
+		TradeInstruction tradeInstruction = new TradeInstruction("Doo", InstructionType.BUY, CurrencyType.INR, 1.0,
 				INSTRUCTION_DATE, SETTLEMENT_DATE, 1, 100.0);
 		tradeInstructions.add(tradeInstruction);
 
-		tradeInstruction = new TradeInstruction("Doo", TransactionType.BUY, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
+		tradeInstruction = new TradeInstruction("Doo", InstructionType.BUY, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE, 1, 125.6);
 		tradeInstructions.add(tradeInstruction);
 
-		tradeInstruction = new TradeInstruction("Too", TransactionType.BUY, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
+		tradeInstruction = new TradeInstruction("Too", InstructionType.BUY, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE_SATURDAY, 1, 150.0);
 		tradeInstructions.add(tradeInstruction);
 
-		tradeInstruction = new TradeInstruction("Roo", TransactionType.SELL, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
+		tradeInstruction = new TradeInstruction("Roo", InstructionType.SELL, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE, 1, 190.0);
 		tradeInstructions.add(tradeInstruction);
 
-		tradeInstruction = new TradeInstruction("Foo", TransactionType.SELL, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
+		tradeInstruction = new TradeInstruction("Foo", InstructionType.SELL, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE_MONDAY, 1, 116.0);
 		tradeInstructions.add(tradeInstruction);
 		return tradeInstructions;

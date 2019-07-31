@@ -3,8 +3,9 @@ package com.sandip.model;
 import java.time.LocalDate;
 
 import com.sandip.enums.CurrencyType;
-import com.sandip.enums.TransactionType;
+import com.sandip.enums.InstructionType;
 import com.sandip.utils.TradeReportUtil;
+
 /**
  * This class holds transaction instruction information sent by clients
  * 
@@ -13,7 +14,7 @@ import com.sandip.utils.TradeReportUtil;
  */
 public class TradeInstruction {
 	private String entity;
-	private TransactionType transactionType;
+	private InstructionType instructionType;
 	private CurrencyType currencyType;
 	private Double agreedFx;
 	private LocalDate instructionDate;
@@ -85,12 +86,12 @@ public class TradeInstruction {
 	 * @param units
 	 * @param pricePerUnit
 	 */
-	public TradeInstruction(String entity, TransactionType transactionType, CurrencyType currency, Double agreedFx,
+	public TradeInstruction(String entity, InstructionType instructionType, CurrencyType currency, Double agreedFx,
 			LocalDate instructionDate, LocalDate settlementDate, int units, Double pricePerUnit) {
 		super();
 		TradeReportUtil.shouldBeNonNegative(agreedFx, (double) units, pricePerUnit);
 		this.entity = entity;
-		this.transactionType = transactionType;
+		this.instructionType = instructionType;
 		this.currencyType = currency;
 		this.agreedFx = agreedFx;
 		this.instructionDate = instructionDate;
@@ -103,12 +104,12 @@ public class TradeInstruction {
 		this.pricePerUnit = pricePerUnit;
 	}
 
-	public TransactionType getTransactionType() {
-		return transactionType;
+	public InstructionType getInstructionType() {
+		return instructionType;
 	}
 
-	public void setTransactionType(TransactionType transactionType) {
-		this.transactionType = transactionType;
+	public void setInstructionType(InstructionType instructionType) {
+		this.instructionType = instructionType;
 	}
 
 }

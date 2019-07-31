@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.sandip.enums.TransactionType;
+import com.sandip.enums.InstructionType;
 import com.sandip.model.TradeInstruction;
 import com.sandip.utils.TradeFormulaes;
 import com.sandip.utils.TradeReportUtil;
@@ -75,8 +75,8 @@ public class SettlementsReport {
 	 * tradeAmount Settlement date wise
 	 */
 	public void dailyIncomingOutgoingReport() {
-		Map<TransactionType, Map<LocalDate, Double>> tradeEachDay = this.tradeInstructions.stream()
-				.collect(Collectors.groupingBy(TradeInstruction::getTransactionType,
+		Map<InstructionType, Map<LocalDate, Double>> tradeEachDay = this.tradeInstructions.stream()
+				.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
 						Collectors.groupingBy(TradeInstruction::getSettlementDate,
 								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
 		tradeEachDay.forEach(this::displayDaywiseIncomingOutgoingTrade);
@@ -85,11 +85,11 @@ public class SettlementsReport {
 	/**
 	 * 
 	 * @param datewiseTradeAmountMap
-	 * @param transactionType
+	 * @param instructionType
 	 */
-	private void displayDaywiseIncomingOutgoingTrade(TransactionType transactionType,
+	private void displayDaywiseIncomingOutgoingTrade(InstructionType instructionType,
 			Map<LocalDate, Double> datewiseTradeAmountMap) {
-		printIncomingOutgoingReportHeaders(transactionType);
+		printIncomingOutgoingReportHeaders(instructionType);
 		datewiseTradeAmountMap.forEach((settlementDate, amount) -> System.out.printf(REPORT_HEADER_PRINT_FORMAT,
 				settlementDate, DOLLAR_SYMBOL + df.format(amount)));
 	}
@@ -99,9 +99,9 @@ public class SettlementsReport {
 	 * 
 	 * @param transactionType
 	 */
-	private void printIncomingOutgoingReportHeaders(TransactionType transactionType) {
+	private void printIncomingOutgoingReportHeaders(InstructionType transactionType) {
 		System.out.println();
-		if (TransactionType.BUY.equals(transactionType)) {
+		if (InstructionType.BUY.equals(transactionType)) {
 
 			System.out.println(OUTGOING_EVERYDAY_TITLE);
 		} else {
@@ -117,8 +117,8 @@ public class SettlementsReport {
 	 * of tradeAmountInUSD
 	 */
 	public void rankingOfEntitiesReport() {
-		Map<TransactionType, Map<String, Double>> tradeEachDay = this.tradeInstructions.stream()
-				.collect(Collectors.groupingBy(TradeInstruction::getTransactionType,
+		Map<InstructionType, Map<String, Double>> tradeEachDay = this.tradeInstructions.stream()
+				.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
 						Collectors.groupingBy(TradeInstruction::getEntity,
 								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
 
@@ -131,7 +131,7 @@ public class SettlementsReport {
 	 * @param transactionType
 	 * @param entityTradeAmountMap
 	 */
-	private void tradeAmountWiseRankingOfEntities(TransactionType transactionType,
+	private void tradeAmountWiseRankingOfEntities(InstructionType transactionType,
 			Map<String, Double> entityTradeAmountMap) {
 		printRankingReportHeader(transactionType);
 		LinkedHashMap<String, Double> entityAmountRanking = entityTradeAmountMap.entrySet().stream()
@@ -147,9 +147,9 @@ public class SettlementsReport {
 	 * 
 	 * @param transactionType
 	 */
-	private void printRankingReportHeader(TransactionType transactionType) {
+	private void printRankingReportHeader(InstructionType transactionType) {
 		System.out.println();
-		if (TransactionType.BUY.equals(transactionType)) {
+		if (InstructionType.BUY.equals(transactionType)) {
 			System.out.println(OUTGOING_ENTITY_RANKING_TITLE);
 		} else {
 			System.out.println(INCOMING_ENTITY_RANKING_TITLE);
