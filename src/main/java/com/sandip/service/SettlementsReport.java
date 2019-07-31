@@ -21,10 +21,24 @@ import com.sandip.utils.TradeReportUtil;
  */
 public class SettlementsReport {
 
-	private static final String TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL = "TradeInstruction list should not be null";
+	private static final String DOLLAR_SYMBOL = "$";
+	private static final String OUTGOING_ENTITY_RANKING_TITLE = "** Outgoing Entity Ranking **";
+	private static final String INCOMING_ENTITY_RANKING_TITLE = "** Incoming Entity Ranking **";
+	private static final String ENTITY_NAME_HEADER = "Entity Name";
+	private static final String AMOUNT_HEADER = "Amount";
+	private static final String SETTLEMENT_DATE_HEADER = "Settlement Date";
+	private static final String INCOMING_EVERYDAY_TITLE = "** Incoming Everyday **";
+	private static final String OUTGOING_EVERYDAY_TITLE = "** Outgoing Everyday **";
 	private static final String REPORT_HEADER_PRINT_FORMAT = "%-20s %-20s%n";
+	private static final String TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL = "TradeInstruction list should not be null";
 	private static final DecimalFormat df = new DecimalFormat("0.00");
 	private List<TradeInstruction> tradeInstructions;
+
+	public static void main(String[] args) {
+		SettlementsReport settlementsReport = new SettlementsReport(TradeReportUtil.populateTradeInstructions());
+		settlementsReport.dailyIncomingOutgoingReport();
+		settlementsReport.rankingOfEntitiesReport();
+	}
 
 	/**
 	 * Accepts List of TradeInstruction and apply SettlementDate weekdays logic on
@@ -61,21 +75,19 @@ public class SettlementsReport {
 				.collect(Collectors.groupingBy(TradeInstruction::getTransactionType,
 						Collectors.groupingBy(TradeInstruction::getSettlementDate,
 								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
-
-		displayDaywiseIncomingOutgoingTrade(tradeEachDay, TransactionType.BUY);
-		displayDaywiseIncomingOutgoingTrade(tradeEachDay, TransactionType.SELL);
+		tradeEachDay.forEach(this::displayDaywiseIncomingOutgoingTrade);
 	}
 
 	/**
 	 * 
-	 * @param tradeEachDay
+	 * @param datewiseTradeAmountMap
 	 * @param transactionType
 	 */
-	private void displayDaywiseIncomingOutgoingTrade(Map<TransactionType, Map<LocalDate, Double>> tradeEachDay,
-			TransactionType transactionType) {
+	private void displayDaywiseIncomingOutgoingTrade(TransactionType transactionType,
+			Map<LocalDate, Double> datewiseTradeAmountMap) {
 		printIncomingOutgoingReportHeaders(transactionType);
-		tradeEachDay.get(transactionType).forEach((settlementDate, amount) -> System.out
-				.printf(REPORT_HEADER_PRINT_FORMAT, settlementDate, "$" + df.format(amount)));
+		datewiseTradeAmountMap.forEach((settlementDate, amount) -> System.out.printf(REPORT_HEADER_PRINT_FORMAT,
+				settlementDate, DOLLAR_SYMBOL + df.format(amount)));
 	}
 
 	/**
@@ -87,12 +99,12 @@ public class SettlementsReport {
 		System.out.println();
 		if (TransactionType.BUY.equals(transactionType)) {
 
-			System.out.println("** Outgoing Everyday **");
+			System.out.println(OUTGOING_EVERYDAY_TITLE);
 		} else {
-			System.out.println("** Incoming Everyday **");
+			System.out.println(INCOMING_EVERYDAY_TITLE);
 		}
 		System.out.println();
-		System.out.printf(REPORT_HEADER_PRINT_FORMAT, "Settlement Date", "Amount");
+		System.out.printf(REPORT_HEADER_PRINT_FORMAT, SETTLEMENT_DATE_HEADER, AMOUNT_HEADER);
 		System.out.printf(REPORT_HEADER_PRINT_FORMAT, "---------------", "-------");
 	}
 
@@ -100,7 +112,7 @@ public class SettlementsReport {
 	 * Group TradeInstruction entity wise and rank them in decreasing order of sum
 	 * of tradeAmountInUSD
 	 */
-	public void rankingOfEntities() {
+	public void rankingOfEntitiesReport() {
 		Map<TransactionType, Map<String, Double>> tradeEachDay = this.tradeInstructions.stream()
 				.collect(Collectors.groupingBy(TradeInstruction::getTransactionType,
 						Collectors.groupingBy(TradeInstruction::getEntity,
@@ -122,7 +134,7 @@ public class SettlementsReport {
 				.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 		entityAmountRanking.forEach((entityName, entityTradeAmount) -> {
-			System.out.printf(REPORT_HEADER_PRINT_FORMAT, entityName, "$" + df.format(entityTradeAmount));
+			System.out.printf(REPORT_HEADER_PRINT_FORMAT, entityName, DOLLAR_SYMBOL + df.format(entityTradeAmount));
 		});
 	}
 
@@ -134,12 +146,12 @@ public class SettlementsReport {
 	private void printRankingReportHeader(TransactionType transactionType) {
 		System.out.println();
 		if (TransactionType.BUY.equals(transactionType)) {
-			System.out.println("** Outgoing Entity Ranking **");
+			System.out.println(OUTGOING_ENTITY_RANKING_TITLE);
 		} else {
-			System.out.println("** Incoming Entity Ranking **");
+			System.out.println(INCOMING_ENTITY_RANKING_TITLE);
 		}
 		System.out.println();
-		System.out.printf(REPORT_HEADER_PRINT_FORMAT, "Entity Name", "Amount");
+		System.out.printf(REPORT_HEADER_PRINT_FORMAT, ENTITY_NAME_HEADER, AMOUNT_HEADER);
 		System.out.printf(REPORT_HEADER_PRINT_FORMAT, "---------------", "-------");
 	}
 
