@@ -86,7 +86,6 @@ public class TradeReportUtil {
 		tradeInstruction = new TradeInstruction("Foo", InstructionType.SELL, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE_MONDAY, 1, 116.0);
 		tradeInstructions.add(tradeInstruction);
-		System.out.println(tradeInstructions);
 		return tradeInstructions;
 	}
 

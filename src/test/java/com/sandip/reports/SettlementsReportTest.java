@@ -1,4 +1,4 @@
-package com.sandip.service;
+package com.sandip.reports;
 
 import static org.junit.Assert.assertEquals;
 
@@ -18,6 +18,7 @@ import org.junit.rules.ExpectedException;
 import com.sandip.enums.CurrencyType;
 import com.sandip.enums.InstructionType;
 import com.sandip.model.TradeInstruction;
+import com.sandip.reports.SettlementsReport;
 
 public class SettlementsReportTest {
 
