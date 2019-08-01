@@ -13,6 +13,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.sandip.enums.InstructionType;
 import com.sandip.model.TradeInstruction;
 import com.sandip.utils.TradeReportUtil;
 
@@ -51,11 +52,11 @@ public class SettlementsReportTest {
 	}
 
 	@Test
-	public void testDailyIncomingOutgoingReport() {
+	public void testOutgoingTradeAmountSettlementDateWiseReport() {
 		// Given
 		settlementsReport = new SettlementsReport(this.tradeInstructions);
 		// When
-		settlementsReport.dailyIncomingOutgoingReport();
+		settlementsReport.dailyTradeAmountReport(InstructionType.BUY);;
 		//Then
 		String expectedReport ="\r\n" + 
 				"** Outgoing Everyday **\r\n" + 
@@ -64,7 +65,19 @@ public class SettlementsReportTest {
 				"---------------      -------             \r\n" + 
 				"2019-07-31           $225.60             \r\n" + 
 				"2019-07-29           $150.00             \r\n" + 
-				"\r\n" + 
+				"";
+		
+		assertEquals(expectedReport, outContent.toString());
+	}
+	
+	@Test
+	public void testIncomingTradeAmountSettlementDateWiseReport() {
+		// Given
+		settlementsReport = new SettlementsReport(this.tradeInstructions);
+		// When
+		settlementsReport.dailyTradeAmountReport(InstructionType.SELL);;
+		//Then
+		String expectedReport ="\r\n" + 
 				"** Incoming Everyday **\r\n" + 
 				"\r\n" + 
 				"Settlement Date      Amount              \r\n" + 
@@ -83,19 +96,19 @@ public class SettlementsReportTest {
 		// When
 		settlementsReport.rankingOfEntitiesReport();
 		String expectedRankingReport = "\r\n" + 
-				"** Outgoing Entity Ranking **\r\n" + 
-				"\r\n" + 
-				"Entity Name          Amount              \r\n" + 
-				"---------------      -------             \r\n" + 
-				"Doo                  $225.60             \r\n" + 
-				"Too                  $150.00             \r\n" + 
-				"\r\n" + 
 				"** Incoming Entity Ranking **\r\n" + 
 				"\r\n" + 
 				"Entity Name          Amount              \r\n" + 
 				"---------------      -------             \r\n" + 
 				"Roo                  $190.00             \r\n" + 
 				"Foo                  $116.00             \r\n" + 
+				"\r\n" + 
+				"** Outgoing Entity Ranking **\r\n" + 
+				"\r\n" + 
+				"Entity Name          Amount              \r\n" + 
+				"---------------      -------             \r\n" + 
+				"Doo                  $225.60             \r\n" + 
+				"Too                  $150.00             \r\n" + 
 				"";
 		assertEquals(expectedRankingReport, outContent.toString());
 	}
@@ -115,7 +128,7 @@ public class SettlementsReportTest {
 		// Given
 		settlementsReport = new SettlementsReport(new ArrayList<>());
 		// When
-		settlementsReport.dailyIncomingOutgoingReport();
+		settlementsReport.dailyTradeAmountReport(InstructionType.BUY);;
 		assertEquals("", outContent.toString());
 	}
 

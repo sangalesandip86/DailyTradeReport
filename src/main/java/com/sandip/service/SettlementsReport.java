@@ -15,6 +15,14 @@ import com.sandip.utils.TradeFormulaes;
 import com.sandip.utils.TradeReportUtil;
 
 /**
+ *
+ * This class capable of generating following reports
+ * 
+ * <li>Incoming USD TradeAmount</li>
+ * {@link SettlementsReport#dailyIncomingOutgoingReport()}
+ * 
+ * <li>Ranking of entities by Trade Amount</li>
+ * {@link SettlementsReport#rankingOfEntitiesReport()}
  * 
  * @author sandip.p.sangale
  *
@@ -33,11 +41,14 @@ public class SettlementsReport {
 	private static final String TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL = "TradeInstruction list should not be null";
 	private static final DecimalFormat df = new DecimalFormat("0.00");
 	private List<TradeInstruction> tradeInstructions;
+	private Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap;
+	private Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount;
 
 	public static void main(String[] args) {
 		try {
 			SettlementsReport settlementsReport = new SettlementsReport(TradeReportUtil.populateTradeInstructions());
-			settlementsReport.dailyIncomingOutgoingReport();
+			settlementsReport.dailyTradeAmountReport(InstructionType.BUY);
+			settlementsReport.dailyTradeAmountReport(InstructionType.SELL);
 			settlementsReport.rankingOfEntitiesReport();
 		} catch (IllegalArgumentException e) {
 			System.out.println(e.getMessage());
@@ -56,6 +67,7 @@ public class SettlementsReport {
 		}
 		this.tradeInstructions = tradeInstructions;
 		this.calculateValidWeekdayForSettlementDate();
+		this.tradeInstructions = Collections.unmodifiableList(this.tradeInstructions);
 	}
 
 	/**
@@ -73,13 +85,29 @@ public class SettlementsReport {
 	/**
 	 * This methods Group by TransactionType and Settlement Date and summing of
 	 * tradeAmount Settlement date wise
+	 * 
+	 * @param instructionType
 	 */
-	public void dailyIncomingOutgoingReport() {
-		Map<InstructionType, Map<LocalDate, Double>> tradeEachDay = this.tradeInstructions.stream()
-				.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
-						Collectors.groupingBy(TradeInstruction::getSettlementDate,
-								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
-		tradeEachDay.forEach(this::displayDaywiseIncomingOutgoingTrade);
+	public void dailyTradeAmountReport(InstructionType instructionType) {
+		groupByInstructionTypeAndSettlementDate();
+		if (instructionTypeDateWiseTradeAmountMap.size() > 0) {
+			printIncomingOutgoingReportHeaders(instructionType);
+			this.instructionTypeDateWiseTradeAmountMap.get(instructionType)
+					.forEach(this::printSettlementDateWiseTradeAmount);
+		}
+	}
+
+	/**
+	 * Group List by Instruction type and Settlement Date, sum TradeAmount
+	 * settlement date wise
+	 */
+	private void groupByInstructionTypeAndSettlementDate() {
+		if (this.instructionTypeDateWiseTradeAmountMap == null) {
+			this.instructionTypeDateWiseTradeAmountMap = this.tradeInstructions.stream()
+					.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
+							Collectors.groupingBy(TradeInstruction::getSettlementDate,
+									Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
+		}
 	}
 
 	/**
@@ -87,11 +115,8 @@ public class SettlementsReport {
 	 * @param datewiseTradeAmountMap
 	 * @param instructionType
 	 */
-	private void displayDaywiseIncomingOutgoingTrade(InstructionType instructionType,
-			Map<LocalDate, Double> datewiseTradeAmountMap) {
-		printIncomingOutgoingReportHeaders(instructionType);
-		datewiseTradeAmountMap.forEach((settlementDate, amount) -> System.out.printf(REPORT_HEADER_PRINT_FORMAT,
-				settlementDate, DOLLAR_SYMBOL + df.format(amount)));
+	private void printSettlementDateWiseTradeAmount(LocalDate settlementDate, Double tradeAmountInUSD) {
+		System.out.printf(REPORT_HEADER_PRINT_FORMAT, settlementDate, DOLLAR_SYMBOL + df.format(tradeAmountInUSD));
 	}
 
 	/**
@@ -117,12 +142,20 @@ public class SettlementsReport {
 	 * of tradeAmountInUSD
 	 */
 	public void rankingOfEntitiesReport() {
-		Map<InstructionType, Map<String, Double>> tradeEachDay = this.tradeInstructions.stream()
-				.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
-						Collectors.groupingBy(TradeInstruction::getEntity,
-								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
+		groupByInstructionTypeAndEntityWise();
+		this.instructionTypeEntityWiseTradeAmount.forEach(this::tradeAmountWiseRankingOfEntities);
+	}
 
-		tradeEachDay.forEach(this::tradeAmountWiseRankingOfEntities);
+	/**
+	 * Group List by Instruction type and Entity, sum TradeAmount entity wise
+	 */
+	private void groupByInstructionTypeAndEntityWise() {
+		if (this.instructionTypeEntityWiseTradeAmount == null) {
+			this.instructionTypeEntityWiseTradeAmount = this.tradeInstructions.stream()
+					.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
+							Collectors.groupingBy(TradeInstruction::getEntity,
+									Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
+		}
 	}
 
 	/**
@@ -134,12 +167,21 @@ public class SettlementsReport {
 	private void tradeAmountWiseRankingOfEntities(InstructionType transactionType,
 			Map<String, Double> entityTradeAmountMap) {
 		printRankingReportHeader(transactionType);
-		LinkedHashMap<String, Double> entityAmountRanking = entityTradeAmountMap.entrySet().stream()
-				.sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
-				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+		LinkedHashMap<String, Double> entityAmountRanking = sortMapByTradeAmountDescendingOrder(entityTradeAmountMap);
 		entityAmountRanking.forEach((entityName, entityTradeAmount) -> {
 			System.out.printf(REPORT_HEADER_PRINT_FORMAT, entityName, DOLLAR_SYMBOL + df.format(entityTradeAmount));
 		});
+	}
+
+	/**
+	 * 
+	 * @param entityTradeAmountMap
+	 * @return
+	 */
+	private LinkedHashMap<String, Double> sortMapByTradeAmountDescendingOrder(
+			Map<String, Double> entityTradeAmountMap) {
+		return entityTradeAmountMap.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
 
 	/**
