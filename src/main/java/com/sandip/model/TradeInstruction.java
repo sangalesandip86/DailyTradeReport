@@ -112,4 +112,11 @@ public class TradeInstruction {
 		this.instructionType = instructionType;
 	}
 
+	@Override
+	public String toString() {
+		return entity + "|" + instructionType + "|"
+				+ currencyType + "|" + agreedFx + "|" + instructionDate + "|"
+				+ settlementDate + "|" + units + "|" + pricePerUnit;
+	}
+
 }

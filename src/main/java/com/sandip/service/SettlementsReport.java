@@ -16,13 +16,13 @@ import com.sandip.utils.TradeReportUtil;
 
 /**
  *
- * This class capable of generating following reports
+ * This class capable of generating following details in report
  * 
- * <li>Incoming USD TradeAmount</li>
- * {@link SettlementsReport#dailyIncomingOutgoingReport()}
- * 
- * <li>Ranking of entities by Trade Amount</li>
- * {@link SettlementsReport#rankingOfEntitiesReport()}
+ * <li>Amount in USD settled incoming everyday</li>
+ * <li>Amount in USD settled outgoing everyday</li>
+ * <li>Ranking of entities based on incoming and outgoing amount. Eg: If entity
+ * foo instructs the highest amount for a buy instruction, then foo is rank 1
+ * for outgoing</li>
  * 
  * @author sandip.p.sangale
  *
@@ -40,33 +40,50 @@ public class SettlementsReport {
 	private static final String REPORT_HEADER_PRINT_FORMAT = "%-20s %-20s%n";
 	private static final String TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL = "TradeInstruction list should not be null";
 	private static final DecimalFormat AMOUNT_DECIMAL_FORMAT = new DecimalFormat("0.00");
-	private List<TradeInstruction> tradeInstructions;
-	private Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap;
-	private Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount;
 
 	public static void main(String[] args) {
+
+		SettlementsReport settlementsReport = new SettlementsReport();
+
 		try {
-			SettlementsReport settlementsReport = new SettlementsReport(TradeReportUtil.populateTradeInstructions());
-			settlementsReport.dailyTradeAmountReport(InstructionType.BUY);
-			settlementsReport.dailyTradeAmountReport(InstructionType.SELL);
-			settlementsReport.rankingOfEntitiesReport();
+			settlementsReport.printReport(TradeReportUtil.populateTradeInstructions());
 		} catch (IllegalArgumentException e) {
 			System.out.println(e.getMessage());
 		}
 	}
 
 	/**
-	 * Accepts List of TradeInstruction and apply SettlementDate weekdays logic on
-	 * each tradeInstruction object
+	 * Perform calculation of valid weekday settlement date.
 	 * 
-	 * @param tradeInstructions
+	 * Calls method to print incoming,Outgoing daily TradeAmountInUSD.
+	 * 
+	 * Calls method to print incoming, outgoing ranking Of entities by
+	 * TradeAmountInUSD
+	 * 
+	 * @param instructionType
 	 */
-	public SettlementsReport(final List<TradeInstruction> tradeInstructions) {
+	public void printReport(List<TradeInstruction> tradeInstructions) {
 		if (tradeInstructions == null) {
 			throw new IllegalArgumentException(TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL);
 		}
-		this.tradeInstructions = tradeInstructions;
-		this.calculateValidWeekdayForSettlementDate();
+		this.calculateValidWeekdayForSettlementDate(tradeInstructions);
+		this.dailyTradeAmountInUSD(tradeInstructions);
+		this.rankingOfEntitiesByTradeAmountInUSD(tradeInstructions);
+	}
+
+	/**
+	 * This methods Group by TransactionType and Settlement Date, sum of tradeAmount
+	 * settlement date wise, calls printSettlementDateWiseTradeAmount method to
+	 * print report to console
+	 * 
+	 * @param tradeInstructions
+	 */
+	private void dailyTradeAmountInUSD(List<TradeInstruction> tradeInstructions) {
+		Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap = groupByInstructionTypeAndSettlementDate(
+				tradeInstructions);
+		//Note : Map is sorted to maintain Incoming, Outgoing section in consistent order
+		instructionTypeDateWiseTradeAmountMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
+				.forEach(entry -> printSettlementDateWiseTradeAmount(entry.getKey(), entry.getValue()));
 	}
 
 	/**
@@ -74,50 +91,41 @@ public class SettlementsReport {
 	 * 
 	 * @param tradeInstructions
 	 */
-	private void calculateValidWeekdayForSettlementDate() {
+	private void calculateValidWeekdayForSettlementDate(List<TradeInstruction> tradeInstructions) {
 		// For each TradeInstruction If settlement date falls on weekend then set it to
 		// Next working day
-		this.tradeInstructions.stream().forEach(tradeInstruction -> tradeInstruction.setSettlementDate(TradeReportUtil
+		tradeInstructions.stream().forEach(tradeInstruction -> tradeInstruction.setSettlementDate(TradeReportUtil
 				.workingDayOfSettlementDate(tradeInstruction.getSettlementDate(), tradeInstruction.getCurrencyType())));
-	}
-
-	/**
-	 * This methods Group by TransactionType and Settlement Date and summing of
-	 * tradeAmount Settlement date wise
-	 * 
-	 * @param instructionType
-	 */
-	public void dailyTradeAmountReport(InstructionType instructionType) {
-		groupByInstructionTypeAndSettlementDate();
-		if (instructionTypeDateWiseTradeAmountMap.size() > 0) {
-			printIncomingOutgoingReportHeaders(instructionType);
-			this.instructionTypeDateWiseTradeAmountMap.get(instructionType)
-					.forEach(this::printSettlementDateWiseTradeAmount);
-		}
 	}
 
 	/**
 	 * Group List by Instruction type and Settlement Date, sum TradeAmount
 	 * settlement date wise.
 	 * 
-	 * Does not perform grouping operation again if similar report generated already, uses earlier populated instructionTypeDateWiseTradeAmountMap
+	 * Does not perform grouping operation again if similar report generated
+	 * already, uses earlier populated instructionTypeDateWiseTradeAmountMap
+	 * 
+	 * @param tradeInstructions
 	 */
-	private void groupByInstructionTypeAndSettlementDate() {
-		if (this.instructionTypeDateWiseTradeAmountMap == null) {
-			this.instructionTypeDateWiseTradeAmountMap = this.tradeInstructions.stream()
-					.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
-							Collectors.groupingBy(TradeInstruction::getSettlementDate,
-									Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
-		}
+	private Map<InstructionType, Map<LocalDate, Double>> groupByInstructionTypeAndSettlementDate(
+			List<TradeInstruction> tradeInstructions) {
+		return tradeInstructions.stream()
+				.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
+						Collectors.groupingBy(TradeInstruction::getSettlementDate,
+								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
 	}
 
 	/**
 	 * 
-	 * @param datewiseTradeAmountMap
 	 * @param instructionType
+	 * @param settlementDateWiseTradeAmountMap
 	 */
-	private void printSettlementDateWiseTradeAmount(LocalDate settlementDate, Double tradeAmountInUSD) {
-		System.out.printf(REPORT_HEADER_PRINT_FORMAT, settlementDate, DOLLAR_SYMBOL + AMOUNT_DECIMAL_FORMAT.format(tradeAmountInUSD));
+	private void printSettlementDateWiseTradeAmount(InstructionType instructionType,
+			Map<LocalDate, Double> settlementDateWiseTradeAmountMap) {
+		printIncomingOutgoingReportHeaders(instructionType);
+		settlementDateWiseTradeAmountMap
+				.forEach((settlementDate, tradeAmountInUSD) -> System.out.printf(REPORT_HEADER_PRINT_FORMAT,
+						settlementDate, DOLLAR_SYMBOL + AMOUNT_DECIMAL_FORMAT.format(tradeAmountInUSD)));
 	}
 
 	/**
@@ -142,21 +150,21 @@ public class SettlementsReport {
 	 * Group TradeInstruction entity wise and rank them in decreasing order of sum
 	 * of tradeAmountInUSD
 	 */
-	public void rankingOfEntitiesReport() {
-		groupByInstructionTypeAndEntityWise();
-		this.instructionTypeEntityWiseTradeAmount.forEach(this::tradeAmountWiseRankingOfEntities);
+	private void rankingOfEntitiesByTradeAmountInUSD(List<TradeInstruction> tradeInstructions) {
+		Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount = groupByInstructionTypeAndEntityWise(
+				tradeInstructions);
+		instructionTypeEntityWiseTradeAmount.forEach(this::printTradeAmountWiseRankingOfEntities);
 	}
 
 	/**
 	 * Group List by Instruction type and Entity, sum TradeAmount entity wise
 	 */
-	private void groupByInstructionTypeAndEntityWise() {
-		if (this.instructionTypeEntityWiseTradeAmount == null) {
-			this.instructionTypeEntityWiseTradeAmount = this.tradeInstructions.stream()
-					.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
-							Collectors.groupingBy(TradeInstruction::getEntity,
-									Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
-		}
+	private Map<InstructionType, Map<String, Double>> groupByInstructionTypeAndEntityWise(
+			List<TradeInstruction> tradeInstructions) {
+		return tradeInstructions.stream()
+				.collect(Collectors.groupingBy(TradeInstruction::getInstructionType,
+						Collectors.groupingBy(TradeInstruction::getEntity,
+								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
 	}
 
 	/**
@@ -165,13 +173,12 @@ public class SettlementsReport {
 	 * @param transactionType
 	 * @param entityTradeAmountMap
 	 */
-	private void tradeAmountWiseRankingOfEntities(InstructionType transactionType,
+	private void printTradeAmountWiseRankingOfEntities(InstructionType transactionType,
 			Map<String, Double> entityTradeAmountMap) {
 		printRankingReportHeader(transactionType);
 		LinkedHashMap<String, Double> entityAmountRanking = sortMapByTradeAmountDescendingOrder(entityTradeAmountMap);
-		entityAmountRanking.forEach((entityName, entityTradeAmount) -> {
-			System.out.printf(REPORT_HEADER_PRINT_FORMAT, entityName, DOLLAR_SYMBOL + AMOUNT_DECIMAL_FORMAT.format(entityTradeAmount));
-		});
+		entityAmountRanking.forEach((entityName, entityTradeAmount) -> System.out.printf(REPORT_HEADER_PRINT_FORMAT,
+				entityName, DOLLAR_SYMBOL + AMOUNT_DECIMAL_FORMAT.format(entityTradeAmount)));
 	}
 
 	/**

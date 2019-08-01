@@ -19,7 +19,7 @@ public class TradeReportUtil {
 	private static final LocalDate SETTLEMENT_DATE = LocalDate.of(2019, Month.JULY, 31);
 	private static final LocalDate SETTLEMENT_DATE_SATURDAY = LocalDate.of(2019, Month.JULY, 27);
 	private static final LocalDate SETTLEMENT_DATE_MONDAY = LocalDate.of(2019, Month.AUGUST, 01);
-	
+
 	private static final Predicate<LocalDate> SATURDAY_SUNDAY = date -> date.getDayOfWeek().equals(DayOfWeek.SATURDAY)
 			|| date.getDayOfWeek().equals(DayOfWeek.SUNDAY);
 
@@ -58,13 +58,19 @@ public class TradeReportUtil {
 		}
 	}
 
+	/**
+	 * This methods returns default test data
+	 * 
+	 * Note : Modify dataset as per requirement
+	 * @return
+	 */
 	public static List<TradeInstruction> populateTradeInstructions() {
 		List<TradeInstruction> tradeInstructions = new ArrayList<>();
 
 		TradeInstruction tradeInstruction = new TradeInstruction("Doo", InstructionType.BUY, CurrencyType.INR, 1.0,
 				INSTRUCTION_DATE, SETTLEMENT_DATE, 1, 100.0);
 		tradeInstructions.add(tradeInstruction);
-
+		
 		tradeInstruction = new TradeInstruction("Doo", InstructionType.BUY, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE, 1, 125.6);
 		tradeInstructions.add(tradeInstruction);
@@ -80,8 +86,10 @@ public class TradeReportUtil {
 		tradeInstruction = new TradeInstruction("Foo", InstructionType.SELL, CurrencyType.INR, 1.0, INSTRUCTION_DATE,
 				SETTLEMENT_DATE_MONDAY, 1, 116.0);
 		tradeInstructions.add(tradeInstruction);
+		System.out.println(tradeInstructions);
 		return tradeInstructions;
 	}
+
 	private TradeReportUtil() {
 		// Private Constructor
 	}
