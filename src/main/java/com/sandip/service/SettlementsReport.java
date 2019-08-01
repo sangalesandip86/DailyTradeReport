@@ -39,7 +39,7 @@ public class SettlementsReport {
 	private static final String OUTGOING_EVERYDAY_TITLE = "** Outgoing Everyday **";
 	private static final String REPORT_HEADER_PRINT_FORMAT = "%-20s %-20s%n";
 	private static final String TRADE_INSTRUCTION_LIST_SHOULD_NOT_BE_NULL = "TradeInstruction list should not be null";
-	private static final DecimalFormat df = new DecimalFormat("0.00");
+	private static final DecimalFormat AMOUNT_DECIMAL_FORMAT = new DecimalFormat("0.00");
 	private List<TradeInstruction> tradeInstructions;
 	private Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap;
 	private Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount;
@@ -67,7 +67,6 @@ public class SettlementsReport {
 		}
 		this.tradeInstructions = tradeInstructions;
 		this.calculateValidWeekdayForSettlementDate();
-		this.tradeInstructions = Collections.unmodifiableList(this.tradeInstructions);
 	}
 
 	/**
@@ -99,7 +98,9 @@ public class SettlementsReport {
 
 	/**
 	 * Group List by Instruction type and Settlement Date, sum TradeAmount
-	 * settlement date wise
+	 * settlement date wise.
+	 * 
+	 * Does not perform grouping operation again if similar report generated already, uses earlier populated instructionTypeDateWiseTradeAmountMap
 	 */
 	private void groupByInstructionTypeAndSettlementDate() {
 		if (this.instructionTypeDateWiseTradeAmountMap == null) {
@@ -116,7 +117,7 @@ public class SettlementsReport {
 	 * @param instructionType
 	 */
 	private void printSettlementDateWiseTradeAmount(LocalDate settlementDate, Double tradeAmountInUSD) {
-		System.out.printf(REPORT_HEADER_PRINT_FORMAT, settlementDate, DOLLAR_SYMBOL + df.format(tradeAmountInUSD));
+		System.out.printf(REPORT_HEADER_PRINT_FORMAT, settlementDate, DOLLAR_SYMBOL + AMOUNT_DECIMAL_FORMAT.format(tradeAmountInUSD));
 	}
 
 	/**
@@ -169,7 +170,7 @@ public class SettlementsReport {
 		printRankingReportHeader(transactionType);
 		LinkedHashMap<String, Double> entityAmountRanking = sortMapByTradeAmountDescendingOrder(entityTradeAmountMap);
 		entityAmountRanking.forEach((entityName, entityTradeAmount) -> {
-			System.out.printf(REPORT_HEADER_PRINT_FORMAT, entityName, DOLLAR_SYMBOL + df.format(entityTradeAmount));
+			System.out.printf(REPORT_HEADER_PRINT_FORMAT, entityName, DOLLAR_SYMBOL + AMOUNT_DECIMAL_FORMAT.format(entityTradeAmount));
 		});
 	}
 
