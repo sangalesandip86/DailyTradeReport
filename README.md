@@ -1,8 +1,10 @@
 # DailyTradeReport
 
+**Requires JDK 8 or above installed**
+
 **Setup Instructions**
 1. Clone/Download DailyTradeReport repository
-2. Import as maven project into IDE
+2. Import as maven project into IDE 
 3. Build Project
 4. Run as Java application SettlementsReport.java
 
