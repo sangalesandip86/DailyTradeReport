@@ -81,7 +81,8 @@ public class SettlementsReport {
 	private void dailyTradeAmountInUSD(List<TradeInstruction> tradeInstructions) {
 		Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap = groupByInstructionTypeAndSettlementDate(
 				tradeInstructions);
-		//Note : Map keys are sorted to maintain Incoming, Outgoing section in consistent order on report
+		// Note : Map keys are sorted to maintain Incoming, Outgoing section in
+		// consistent order on report
 		instructionTypeDateWiseTradeAmountMap.entrySet().stream().sorted(Map.Entry.comparingByKey())
 				.forEach(entry -> printSettlementDateWiseTradeAmount(entry.getKey(), entry.getValue()));
 	}
@@ -153,7 +154,10 @@ public class SettlementsReport {
 	private void rankingOfEntitiesByTradeAmountInUSD(List<TradeInstruction> tradeInstructions) {
 		Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount = groupByInstructionTypeAndEntityWise(
 				tradeInstructions);
-		instructionTypeEntityWiseTradeAmount.forEach(this::printTradeAmountWiseRankingOfEntities);
+		// Note: Sorting map by keys to keep Incoming, Outgoing section in consistent
+		// order on report
+		instructionTypeEntityWiseTradeAmount.entrySet().stream().sorted(Map.Entry.comparingByKey())
+				.forEach(entry -> printTradeAmountWiseRankingOfEntities(entry.getKey(), entry.getValue()));
 	}
 
 	/**
