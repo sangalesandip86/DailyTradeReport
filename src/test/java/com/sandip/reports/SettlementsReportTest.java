@@ -18,7 +18,6 @@ import org.junit.rules.ExpectedException;
 import com.sandip.enums.CurrencyType;
 import com.sandip.enums.InstructionType;
 import com.sandip.model.TradeInstruction;
-import com.sandip.reports.SettlementsReport;
 
 public class SettlementsReportTest {
 
@@ -29,14 +28,13 @@ public class SettlementsReportTest {
 	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
 	private final PrintStream originalErr = System.err;
-	private static SettlementsReport settlementsReport = new SettlementsReport();
-	
+	private static SettlementsReport settlementsReport = new ConsoleSettlementsReport();
+
 	private static final LocalDate INSTRUCTION_DATE = LocalDate.of(2019, Month.JULY, 31);
 	private static final LocalDate SETTLEMENT_DATE = LocalDate.of(2019, Month.JULY, 31);
 	private static final LocalDate SETTLEMENT_DATE_SATURDAY = LocalDate.of(2019, Month.JULY, 27);
 	private static final LocalDate SETTLEMENT_DATE_MONDAY = LocalDate.of(2019, Month.AUGUST, 01);
 
-	
 	@Before
 	public void setUpStreams() {
 		System.setOut(new PrintStream(outContent));
@@ -55,59 +53,37 @@ public class SettlementsReportTest {
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("TradeInstruction list should not be null");
 
-		settlementsReport = new SettlementsReport();
 		settlementsReport.printReport(null);
 	}
 
 	@Test
 	public void testPrintReport() {
-		// Given
-		settlementsReport = new SettlementsReport();
 		// When
 		settlementsReport.printReport(populateTradeInstructions());
-		//Then
-		String expectedReport ="\r\n" + 
-				"** Outgoing Everyday **\r\n" + 
-				"\r\n" + 
-				"Settlement Date      Amount              \r\n" + 
-				"---------------      -------             \r\n" + 
-				"2019-07-31           $225.60             \r\n" + 
-				"2019-07-29           $150.00             \r\n" + 
-				"\r\n" + 
-				"** Incoming Everyday **\r\n" + 
-				"\r\n" + 
-				"Settlement Date      Amount              \r\n" + 
-				"---------------      -------             \r\n" + 
-				"2019-07-31           $190.00             \r\n" + 
-				"2019-08-01           $116.00             \r\n" + 
-				"\r\n" + 
-				"** Outgoing Entity Ranking **\r\n" + 
-				"\r\n" + 
-				"Entity Name          Amount              \r\n" + 
-				"---------------      -------             \r\n" + 
-				"Doo                  $225.60             \r\n" + 
-				"Too                  $150.00             \r\n" + 
-				"\r\n" + 
-				"** Incoming Entity Ranking **\r\n" + 
-				"\r\n" + 
-				"Entity Name          Amount              \r\n" + 
-				"---------------      -------             \r\n" + 
-				"Roo                  $190.00             \r\n" + 
-				"Foo                  $116.00             \r\n" + 
-				"";
-		
+		// Then
+		String expectedReport = "\r\n" + "** Outgoing Everyday **\r\n" + "\r\n"
+				+ "Settlement Date      Amount              \r\n" + "---------------      -------             \r\n"
+				+ "2019-07-31           $225.60             \r\n" + "2019-07-29           $150.00             \r\n"
+				+ "\r\n" + "** Incoming Everyday **\r\n" + "\r\n" + "Settlement Date      Amount              \r\n"
+				+ "---------------      -------             \r\n" + "2019-07-31           $190.00             \r\n"
+				+ "2019-08-01           $116.00             \r\n" + "\r\n" + "** Outgoing Entity Ranking **\r\n"
+				+ "\r\n" + "Entity Name          Amount              \r\n"
+				+ "---------------      -------             \r\n" + "Doo                  $225.60             \r\n"
+				+ "Too                  $150.00             \r\n" + "\r\n" + "** Incoming Entity Ranking **\r\n"
+				+ "\r\n" + "Entity Name          Amount              \r\n"
+				+ "---------------      -------             \r\n" + "Roo                  $190.00             \r\n"
+				+ "Foo                  $116.00             \r\n" + "";
+
 		assertEquals(expectedReport, outContent.toString());
 	}
-	
+
 	@Test
 	public void testIncomingTradeAmountSettlementDateWiseReport() {
-		// Given
-		settlementsReport = new SettlementsReport();
 		// When
 		settlementsReport.printReport(new ArrayList<>());
-		//Then
-		String expectedReport ="";
-		
+		// Then
+		String expectedReport = "";
+
 		assertEquals(expectedReport, outContent.toString());
 	}
 

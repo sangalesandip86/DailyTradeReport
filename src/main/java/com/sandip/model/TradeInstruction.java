@@ -20,6 +20,7 @@ public class TradeInstruction {
 	private LocalDate instructionDate;
 	private LocalDate settlementDate;
 	private int units;
+
 	private Double pricePerUnit;
 
 	public String getEntity() {
