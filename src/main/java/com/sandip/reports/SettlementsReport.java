@@ -15,6 +15,9 @@ import com.sandip.utils.TradeReportUtil;
 
 /**
  *
+ * This interface provides abstract method printReport
+ * 
+ * It contains default method which provides implementation for common operation related to report.
  * 
  * @author sandip.p.sangale
  *
@@ -72,6 +75,11 @@ public interface SettlementsReport {
 								Collectors.summingDouble(TradeFormulaes.TRADE_AMOUNT_IN_USD::applyAsDouble))));
 	}
 
+	/**
+	 * Method to generate report
+	 * 
+	 * @param tradeInstructions
+	 */
 	public void printReport(List<TradeInstruction> tradeInstructions);
 
 }
