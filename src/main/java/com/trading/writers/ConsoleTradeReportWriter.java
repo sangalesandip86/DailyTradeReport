@@ -27,8 +27,7 @@ public class ConsoleTradeReportWriter implements TradeReportWriter {
 			Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount) {
 		instructionTypeDateWiseTradeAmountMap.forEach(this::printSettlementDateWiseTradeAmount);
 		instructionTypeEntityWiseTradeAmount.forEach(this::printTradeAmountWiseRankingOfEntities);
-		if(!tradeReportString.equals(new StringBuilder()))
-		System.out.println(tradeReportString.toString());
+		System.out.println(tradeReportString);
 	}
 
 	/**

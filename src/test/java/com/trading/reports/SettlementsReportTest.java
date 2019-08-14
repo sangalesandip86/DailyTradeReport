@@ -24,11 +24,11 @@ public class SettlementsReportTest {
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();
 
-	private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+	private ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+	private ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
 	private final PrintStream originalErr = System.err;
-	private static TradeReport settlementsReport = new TradeReportImpl();
+	private TradeReport settlementsReport = new TradeReportImpl();;
 
 	private static final LocalDate INSTRUCTION_DATE = LocalDate.of(2019, Month.JULY, 31);
 	private static final LocalDate SETTLEMENT_DATE = LocalDate.of(2019, Month.JULY, 31);
@@ -61,42 +61,18 @@ public class SettlementsReportTest {
 		// When
 		settlementsReport.generateReport(populateTradeInstructions());
 		// Then
-		String expectedReport = "\n"
-				+ "** Outgoing Everyday **\n\n"
-				+ "Settlement Date      Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "2019-07-31           $225.60             \r\n"
-				+ "2019-07-29           $150.00             \r\n"
-				+ "\n"
-				+ "** Incoming Everyday **\n\n"
-				+ "Settlement Date      Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "2019-07-31           $190.00             \r\n"
-				+ "2019-08-01           $116.00             \r\n"
-				+ "\n"
-				+ "** Outgoing Entity Ranking **\n\n"
-				+ "Entity Name          Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "Doo                  $225.60             \r\n"
-				+ "Too                  $150.00             \r\n"
-				+ "\n"
-				+ "** Incoming Entity Ranking **\n\n"
-				+ "Entity Name          Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "Roo                  $190.00             \r\n"
-				+ "Foo                  $116.00             \r\n"
+		String expectedReport = "\n" + "** Outgoing Everyday **\n\n" + "Settlement Date      Amount              \r\n"
+				+ "---------------      -------             \r\n" + "2019-07-31           $225.60             \r\n"
+				+ "2019-07-29           $150.00             \r\n" + "\n" + "** Incoming Everyday **\n\n"
+				+ "Settlement Date      Amount              \r\n" + "---------------      -------             \r\n"
+				+ "2019-07-31           $190.00             \r\n" + "2019-08-01           $116.00             \r\n"
+				+ "\n" + "** Outgoing Entity Ranking **\n\n" + "Entity Name          Amount              \r\n"
+				+ "---------------      -------             \r\n" + "Doo                  $225.60             \r\n"
+				+ "Too                  $150.00             \r\n" + "\n" + "** Incoming Entity Ranking **\n\n"
+				+ "Entity Name          Amount              \r\n" + "---------------      -------             \r\n"
+				+ "Roo                  $190.00             \r\n" + "Foo                  $116.00             \r\n"
 				+ "\r\n";
 		assertEquals(expectedReport.trim(), outContent.toString().trim());
-	}
-
-	@Test
-	public void testIncomingTradeAmountSettlementDateWiseReport() {
-		// When
-		settlementsReport.generateReport(new ArrayList<>());
-		// Then
-		String expectedReport = "\r\n";
-
-		assertEquals(expectedReport, outContent.toString());
 	}
 
 	public static List<TradeInstruction> populateTradeInstructions() {

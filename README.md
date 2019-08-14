@@ -27,42 +27,9 @@ This program has been developed and tested on windows platform only
 3. PricePerUnit, Units and agreedFx should be positive number.
 
 
-**Solution and Coding**
-
-My implementation of DailyTradeReport has following classes and interfaces :
-
-TradeInstrcution
-This is model class for Trade Instruction record
- 
-TradeInstructionReader
-It defines the public API of TradeInstructionReader
-
-TextTradeInstructionReader
-Implementation provided to read Pipe delimited record in Text file format and convert it into List
-
-TradeReport
-
-It defines the public API of TradeReport and default implementation of common operation
-
-TradeReportImpl
-
-This class provides Trade Report engine implementation
-
-TradeReportWriter
-
-It defines the public API of TradeReportWriter
-
-ConsoleTradeReportWriter
-
-Console specific Implementation of TradeReportWriter 
-
-CurrencyType
-
-InstructionType
-
-
 **Dependencies Used**
 1. Junit
+2. SLF4J
 
 **Plugins Used**
 1. Maven
