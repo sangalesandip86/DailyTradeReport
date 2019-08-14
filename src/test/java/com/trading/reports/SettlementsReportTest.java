@@ -61,20 +61,32 @@ public class SettlementsReportTest {
 		// When
 		settlementsReport.generateReport(populateTradeInstructions());
 		// Then
-		String expectedReport = "\r\n" + "** Outgoing Everyday **\r\n" + "\r\n"
-				+ "Settlement Date      Amount              \r\n" + "---------------      -------             \r\n"
-				+ "2019-07-31           $225.60             \r\n" + "2019-07-29           $150.00             \r\n"
-				+ "\r\n" + "** Incoming Everyday **\r\n" + "\r\n" + "Settlement Date      Amount              \r\n"
-				+ "---------------      -------             \r\n" + "2019-07-31           $190.00             \r\n"
-				+ "2019-08-01           $116.00             \r\n" + "\r\n" + "** Outgoing Entity Ranking **\r\n"
-				+ "\r\n" + "Entity Name          Amount              \r\n"
-				+ "---------------      -------             \r\n" + "Doo                  $225.60             \r\n"
-				+ "Too                  $150.00             \r\n" + "\r\n" + "** Incoming Entity Ranking **\r\n"
-				+ "\r\n" + "Entity Name          Amount              \r\n"
-				+ "---------------      -------             \r\n" + "Roo                  $190.00             \r\n"
-				+ "Foo                  $116.00             \r\n" + "";
-
-		assertEquals(expectedReport, outContent.toString());
+		String expectedReport = "\n"
+				+ "** Outgoing Everyday **\n\n"
+				+ "Settlement Date      Amount              \r\n"
+				+ "---------------      -------             \r\n"
+				+ "2019-07-31           $225.60             \r\n"
+				+ "2019-07-29           $150.00             \r\n"
+				+ "\n"
+				+ "** Incoming Everyday **\n\n"
+				+ "Settlement Date      Amount              \r\n"
+				+ "---------------      -------             \r\n"
+				+ "2019-07-31           $190.00             \r\n"
+				+ "2019-08-01           $116.00             \r\n"
+				+ "\n"
+				+ "** Outgoing Entity Ranking **\n\n"
+				+ "Entity Name          Amount              \r\n"
+				+ "---------------      -------             \r\n"
+				+ "Doo                  $225.60             \r\n"
+				+ "Too                  $150.00             \r\n"
+				+ "\n"
+				+ "** Incoming Entity Ranking **\n\n"
+				+ "Entity Name          Amount              \r\n"
+				+ "---------------      -------             \r\n"
+				+ "Roo                  $190.00             \r\n"
+				+ "Foo                  $116.00             \r\n"
+				+ "\r\n";
+		assertEquals(expectedReport.trim(), outContent.toString().trim());
 	}
 
 	@Test
@@ -82,7 +94,7 @@ public class SettlementsReportTest {
 		// When
 		settlementsReport.generateReport(new ArrayList<>());
 		// Then
-		String expectedReport = "";
+		String expectedReport = "\r\n";
 
 		assertEquals(expectedReport, outContent.toString());
 	}

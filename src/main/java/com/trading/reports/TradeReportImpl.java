@@ -32,10 +32,7 @@ public class TradeReportImpl implements TradeReport {
 	/**
 	 * Perform calculation of valid weekday settlement date.
 	 * 
-	 * Calls method to print incoming,Outgoing daily TradeAmountInUSD.
-	 * 
-	 * Calls method to print incoming, outgoing ranking Of entities by
-	 * TradeAmountInUSD
+	 * Calls method to generate Report
 	 * 
 	 * @param instructionType
 	 * 
