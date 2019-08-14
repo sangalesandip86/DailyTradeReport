@@ -1,4 +1,4 @@
-package com.sandip.input;
+package com.trading.input;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -10,7 +10,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.sandip.model.TradeInstruction;
+import com.trading.model.TradeInstruction;
+import com.trading.readers.TextTradeInstructionReader;
+import com.trading.readers.TradeInstructionReader;
 
 public class TradeInstructionReaderTest {
 
@@ -21,7 +23,7 @@ public class TradeInstructionReaderTest {
 
 	@Test
 	public void testMapToTradeInstruction() throws IOException {
-		List<TradeInstruction> tradeInstructions = inputProcessor.processTradeInstructions();
+		List<TradeInstruction> tradeInstructions = inputProcessor.readTradeInstructions();
 		assertNotNull(tradeInstructions);
 		assertFalse(tradeInstructions.isEmpty());
 	}

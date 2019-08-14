@@ -1,11 +1,11 @@
-package com.sandip.utils;
+package com.trading.utils;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjusters;
 import java.util.function.Predicate;
 
-import com.sandip.enums.CurrencyType;
+import com.trading.enums.CurrencyType;
 
 public class TradeReportUtil {
 

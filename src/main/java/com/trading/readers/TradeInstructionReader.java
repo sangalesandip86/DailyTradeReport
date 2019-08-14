@@ -1,14 +1,15 @@
-package com.sandip.input;
+package com.trading.readers;
 
 import java.io.IOException;
 import java.util.List;
 
-import com.sandip.model.TradeInstruction;
+import com.trading.model.TradeInstruction;
+
 /**
  * 
  * @author sandip.p.sangale
  *
  */
 public interface TradeInstructionReader {
-	List<TradeInstruction> processTradeInstructions() throws IOException;
+	List<TradeInstruction> readTradeInstructions() throws IOException;
 }

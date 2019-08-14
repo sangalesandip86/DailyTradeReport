@@ -1,18 +1,18 @@
-package com.sandip.input;
+package com.trading.readers;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.sandip.enums.CurrencyType;
-import com.sandip.enums.InstructionType;
-import com.sandip.model.TradeInstruction;
+import com.trading.enums.CurrencyType;
+import com.trading.enums.InstructionType;
+import com.trading.model.TradeInstruction;
 
 /**
  * 
@@ -21,7 +21,7 @@ import com.sandip.model.TradeInstruction;
  */
 public class TextTradeInstructionReader implements TradeInstructionReader {
 	private static final String DATE_FORMAT = "d MMM yyyy";
-	private static final String PIPE = "\\|";
+	private static final String DELIMITER = "\\|";
 	private static final String INVALID_TRADE_INSTRUCTION_RECORD_8_PIPE_DELIMITED_VALUES_EXPECTED_IN_EACH_LINE = "Invalid TradeInstruction record, 8 Pipe delimited values expected in each line";
 	private String fileName;
 	private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern(DATE_FORMAT);
@@ -34,10 +34,10 @@ public class TextTradeInstructionReader implements TradeInstructionReader {
 	 * Read file and process each line and mapToTradeInstruction
 	 */
 	@Override
-	public List<TradeInstruction> processTradeInstructions() throws IOException {
-		List<TradeInstruction> tradeInstructions = new ArrayList<>();
+	public List<TradeInstruction> readTradeInstructions() throws IOException {
+		List<TradeInstruction> tradeInstructions;
 		try (Stream<String> stream = Files.lines(Paths.get(this.fileName))) {
-			stream.forEach(line -> tradeInstructions.add(mapToTradeInstruction(line)));
+			tradeInstructions = stream.map(this::mapToTradeInstruction).collect(Collectors.toList());
 		}
 		return tradeInstructions;
 	}
@@ -50,7 +50,7 @@ public class TextTradeInstructionReader implements TradeInstructionReader {
 	 * @return
 	 */
 	private TradeInstruction mapToTradeInstruction(String line) {
-		Pattern pattern = Pattern.compile(PIPE);
+		Pattern pattern = Pattern.compile(DELIMITER);
 		String[] lineArray = pattern.split(line);
 
 		if (lineArray.length < 8) {

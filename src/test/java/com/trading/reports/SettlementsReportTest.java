@@ -1,4 +1,4 @@
-package com.sandip.reports;
+package com.trading.reports;
 
 import static org.junit.Assert.assertEquals;
 
@@ -15,9 +15,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.sandip.enums.CurrencyType;
-import com.sandip.enums.InstructionType;
-import com.sandip.model.TradeInstruction;
+import com.trading.enums.CurrencyType;
+import com.trading.enums.InstructionType;
+import com.trading.model.TradeInstruction;
 
 public class SettlementsReportTest {
 
@@ -28,7 +28,7 @@ public class SettlementsReportTest {
 	private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 	private final PrintStream originalOut = System.out;
 	private final PrintStream originalErr = System.err;
-	private static SettlementsReport settlementsReport = new ConsoleSettlementsReport();
+	private static TradeReport settlementsReport = new TradeReportImpl();
 
 	private static final LocalDate INSTRUCTION_DATE = LocalDate.of(2019, Month.JULY, 31);
 	private static final LocalDate SETTLEMENT_DATE = LocalDate.of(2019, Month.JULY, 31);
@@ -53,13 +53,13 @@ public class SettlementsReportTest {
 		thrown.expect(IllegalArgumentException.class);
 		thrown.expectMessage("TradeInstruction list should not be null");
 
-		settlementsReport.printReport(null);
+		settlementsReport.generateReport(null);
 	}
 
 	@Test
 	public void testPrintReport() {
 		// When
-		settlementsReport.printReport(populateTradeInstructions());
+		settlementsReport.generateReport(populateTradeInstructions());
 		// Then
 		String expectedReport = "\r\n" + "** Outgoing Everyday **\r\n" + "\r\n"
 				+ "Settlement Date      Amount              \r\n" + "---------------      -------             \r\n"
@@ -80,7 +80,7 @@ public class SettlementsReportTest {
 	@Test
 	public void testIncomingTradeAmountSettlementDateWiseReport() {
 		// When
-		settlementsReport.printReport(new ArrayList<>());
+		settlementsReport.generateReport(new ArrayList<>());
 		// Then
 		String expectedReport = "";
 

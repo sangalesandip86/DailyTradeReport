@@ -1,8 +1,8 @@
-package com.sandip.utils;
+package com.trading.utils;
 
 import java.util.function.ToDoubleFunction;
 
-import com.sandip.model.TradeInstruction;
+import com.trading.model.TradeInstruction;
 
 public class TradeFormulaes {
 	/**

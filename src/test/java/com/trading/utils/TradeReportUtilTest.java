@@ -1,4 +1,4 @@
-package com.sandip.utils;
+package com.trading.utils;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,7 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.sandip.enums.CurrencyType;
+import com.trading.enums.CurrencyType;
 
 public class TradeReportUtilTest {
 
@@ -60,7 +60,7 @@ public class TradeReportUtilTest {
 		// Then
 		assertEquals(LocalDate.of(2019, 07, 28), actualSettlementDate);
 	}
-	
+
 	@Test
 	public void testSettlementDateSundayIsValidWeekDayWhenCurrencySGP() {
 		// Given
@@ -94,7 +94,7 @@ public class TradeReportUtilTest {
 		TradeReportUtil.shouldBeNonNegative(price, units, agreedFX);
 
 	}
-	
+
 	@Test
 	public void testShouldBeNonNegativeThrowExceptionIfZero() {
 		// Given
@@ -108,7 +108,7 @@ public class TradeReportUtilTest {
 		TradeReportUtil.shouldBeNonNegative(price, units, agreedFX);
 
 	}
-	
+
 	@Test
 	public void testAboveZero() {
 		// Given

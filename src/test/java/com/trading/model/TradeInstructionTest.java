@@ -1,4 +1,4 @@
-package com.sandip.model;
+package com.trading.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -9,9 +9,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import com.sandip.enums.CurrencyType;
-import com.sandip.enums.InstructionType;
-import com.sandip.utils.TradeFormulaes;
+import com.trading.enums.CurrencyType;
+import com.trading.enums.InstructionType;
+import com.trading.utils.TradeFormulaes;
 
 /**
  * 

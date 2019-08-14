@@ -1,4 +1,4 @@
-package com.sandip.reports;
+package com.trading.reports;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -8,21 +8,22 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import com.sandip.enums.InstructionType;
-import com.sandip.model.TradeInstruction;
-import com.sandip.utils.TradeFormulaes;
-import com.sandip.utils.TradeReportUtil;
+import com.trading.enums.InstructionType;
+import com.trading.model.TradeInstruction;
+import com.trading.utils.TradeFormulaes;
+import com.trading.utils.TradeReportUtil;
 
 /**
  *
- * This interface provides abstract method printReport
+ * This interface provides abstract method generateReport
  * 
- * It contains default method which provides implementation for common operation related to report.
+ * It contains default method which provides implementation for common operation
+ * related to report.
  * 
  * @author sandip.p.sangale
  *
  */
-public interface SettlementsReport {
+public interface TradeReport {
 
 	/**
 	 * Calculate and set valid working day of settlementDate based on currency Type
@@ -58,8 +59,7 @@ public interface SettlementsReport {
 	 * @param entityTradeAmountMap
 	 * @return
 	 */
-	default LinkedHashMap<String, Double> sortMapByTradeAmountDescendingOrder(
-			Map<String, Double> entityTradeAmountMap) {
+	default Map<String, Double> sortTradeAmountInDescendingOrder(Map<String, Double> entityTradeAmountMap) {
 		return entityTradeAmountMap.entrySet().stream().sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
 				.collect(Collectors.toMap(Entry::getKey, Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
 	}
@@ -76,10 +76,9 @@ public interface SettlementsReport {
 	}
 
 	/**
-	 * Method to generate report
 	 * 
 	 * @param tradeInstructions
 	 */
-	public void printReport(List<TradeInstruction> tradeInstructions);
+	public void generateReport(List<TradeInstruction> tradeInstructions);
 
 }

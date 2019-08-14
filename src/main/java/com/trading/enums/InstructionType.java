@@ -1,4 +1,4 @@
-package com.sandip.enums;
+package com.trading.enums;
 
 public enum InstructionType {
 	BUY, SELL
