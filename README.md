@@ -23,9 +23,9 @@ This program has been developed and tested on windows platform only
  
 **Assumptions**
 1. Trade Instructions sent by client in text file format (pipe delimited fields).
-2. Assumed all fields are in required format, extensive validation is not done on input fields, we can implement validation later on all incoming fields.
-3. PricePerUnit, Units and agreedFx should be positive number.
-
+2. I have implemented solution to read TradeInstruction from given tradeInstruction file in text format, We can make it better by implementing Scheduler/Cron job and monitor incoming file on any specified folder Location.
+3. Assumed all fields are in required format, extensive validation is not done on input fields, we can implement validation later on all incoming fields.
+4. PricePerUnit, Units and agreedFx should be positive number.
 
 **Dependencies Used**
 1. Junit
@@ -33,3 +33,13 @@ This program has been developed and tested on windows platform only
 
 **Plugins Used**
 1. Maven
+
+
+**Solution and Coding**
+1. Reader :
+	TradeInstructionReader interface to read data provided by client, Right now this application only provides text file specific implementation.
+2. Report : 
+	TradeReport interface provide public API process records of TradeInstrcution and apply business logic.
+3. Writer : 
+	TradeReportWriter provide public API to generateReport, this application right now only support Console specific ConsoleTradeReportWriter.
+	
