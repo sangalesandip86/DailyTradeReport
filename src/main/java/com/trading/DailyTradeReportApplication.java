@@ -20,11 +20,13 @@ import com.trading.reports.TradeReportImpl;
 public class DailyTradeReportApplication {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DailyTradeReportApplication.class);
+
 	public static void main(String[] args) {
 		TradeReport settlementsReport = new TradeReportImpl();
 		try {
 			ResourceBundle resources = ResourceBundle.getBundle("config");
-			TradeInstructionReader tradeInstrcutionReader = new TextTradeInstructionReader(resources.getString("tradeinstructions.file.path"));
+			TradeInstructionReader tradeInstrcutionReader = new TextTradeInstructionReader(
+					resources.getString("tradeinstructions.file.path"));
 			settlementsReport.generateReport(tradeInstrcutionReader.readTradeInstructions());
 		} catch (IllegalArgumentException | DateTimeParseException | IOException e) {
 			LOG.error(e.getMessage());

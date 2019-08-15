@@ -34,78 +34,68 @@ public class TradeReportWriterTest {
 		System.setOut(originalOut);
 		System.setErr(originalErr);
 	}
-	
+
 	@Test
 	public void testGenerateReportNullInputs() {
-		//Given
+		// Given
 		Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap = null;
 		Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount = null;
-		//When
+		// When
 		tradeReportWriter.generateReport(instructionTypeDateWiseTradeAmountMap, instructionTypeEntityWiseTradeAmount);
-		//Then
+		// Then
 		String expectedReport = EMPTY;
 		assertEquals(expectedReport, outContent.toString().trim());
 	}
-	
+
 	@Test
 	public void testGenerateReportValidInputs() {
-		//Given
+		// Given
 		Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap = new HashMap<>();
 		Map<LocalDate, Double> dateWiseTradeAmountMap = new HashMap<>();
 		dateWiseTradeAmountMap.put(LocalDate.of(2019, 8, 15), 100.0);
 		dateWiseTradeAmountMap.put(LocalDate.of(2019, 8, 14), 100.0);
 		instructionTypeDateWiseTradeAmountMap.put(InstructionType.BUY, dateWiseTradeAmountMap);
-		
-		Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount =  new HashMap<>();
+
+		Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount = new HashMap<>();
 		Map<String, Double> entityWiseTradeAmountMap = new LinkedHashMap<>();
 		entityWiseTradeAmountMap.put("Foo", 125.0);
 		entityWiseTradeAmountMap.put("Roo", 120.0);
 		instructionTypeEntityWiseTradeAmount.put(InstructionType.SELL, entityWiseTradeAmountMap);
-		//When
+		// When
 		tradeReportWriter.generateReport(instructionTypeDateWiseTradeAmountMap, instructionTypeEntityWiseTradeAmount);
-		//Then
-		String expectedReport = "** Outgoing Everyday **\n\n"
-				+ "Settlement Date      Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "2019-08-15           $100.00             \r\n"
-				+ "2019-08-14           $100.00             \r\n\n"
-				+ "** Incoming Entity Ranking **\n\n"
-				+ "Entity Name          Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "Foo                  $125.00             \r\n"
-				+ "Roo                  $120.00";
-		
+		// Then
+		String expectedReport = "** Outgoing Everyday **\n\n" + "Settlement Date      Amount              \r\n"
+				+ "---------------      -------             \r\n" + "2019-08-15           $100.00             \r\n"
+				+ "2019-08-14           $100.00             \r\n\n" + "** Incoming Entity Ranking **\n\n"
+				+ "Entity Name          Amount              \r\n" + "---------------      -------             \r\n"
+				+ "Foo                  $125.00             \r\n" + "Roo                  $120.00";
+
 		assertEquals(expectedReport, outContent.toString().trim());
 	}
-	
+
 	@Test
 	public void testGenerateReportValidInput() {
-		//Given
+		// Given
 		Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap = new HashMap<>();
 		Map<LocalDate, Double> dateWiseTradeAmountMap = new HashMap<>();
 		dateWiseTradeAmountMap.put(LocalDate.of(2019, 8, 15), 100.0);
 		dateWiseTradeAmountMap.put(LocalDate.of(2019, 8, 14), 100.0);
 		instructionTypeDateWiseTradeAmountMap.put(InstructionType.SELL, dateWiseTradeAmountMap);
-		
-		Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount =  new HashMap<>();
+
+		Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount = new HashMap<>();
 		Map<String, Double> entityWiseTradeAmountMap = new LinkedHashMap<>();
 		entityWiseTradeAmountMap.put("Foo", 125.0);
 		entityWiseTradeAmountMap.put("Roo", 120.0);
 		instructionTypeEntityWiseTradeAmount.put(InstructionType.BUY, entityWiseTradeAmountMap);
-		//When
+		// When
 		tradeReportWriter.generateReport(instructionTypeDateWiseTradeAmountMap, instructionTypeEntityWiseTradeAmount);
-		//Then
-		String expectedReport = "** Incoming Everyday **\n\n"
-				+ "Settlement Date      Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "2019-08-15           $100.00             \r\n"
-				+ "2019-08-14           $100.00             \r\n\n"
-				+ "** Outgoing Entity Ranking **\n\n"
-				+ "Entity Name          Amount              \r\n"
-				+ "---------------      -------             \r\n"
-				+ "Foo                  $125.00             \r\n"
-				+ "Roo                  $120.00";
-		
+		// Then
+		String expectedReport = "** Incoming Everyday **\n\n" + "Settlement Date      Amount              \r\n"
+				+ "---------------      -------             \r\n" + "2019-08-15           $100.00             \r\n"
+				+ "2019-08-14           $100.00             \r\n\n" + "** Outgoing Entity Ranking **\n\n"
+				+ "Entity Name          Amount              \r\n" + "---------------      -------             \r\n"
+				+ "Foo                  $125.00             \r\n" + "Roo                  $120.00";
+
 		assertEquals(expectedReport, outContent.toString().trim());
 	}
 }
