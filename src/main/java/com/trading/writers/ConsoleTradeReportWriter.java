@@ -6,6 +6,11 @@ import java.util.Map;
 
 import com.trading.enums.InstructionType;
 
+/**
+ * 
+ * @author sandip.p.sangale
+ *
+ */
 public class ConsoleTradeReportWriter implements TradeReportWriter {
 
 	private static final DecimalFormat AMOUNT_DECIMAL_FORMAT = new DecimalFormat("0.00");
@@ -25,9 +30,11 @@ public class ConsoleTradeReportWriter implements TradeReportWriter {
 	@Override
 	public void generateReport(Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap,
 			Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount) {
-		instructionTypeDateWiseTradeAmountMap.forEach(this::printSettlementDateWiseTradeAmount);
-		instructionTypeEntityWiseTradeAmount.forEach(this::printTradeAmountWiseRankingOfEntities);
-		System.out.println(tradeReportString);
+		if (instructionTypeDateWiseTradeAmountMap != null && instructionTypeEntityWiseTradeAmount != null) {
+			instructionTypeDateWiseTradeAmountMap.forEach(this::printSettlementDateWiseTradeAmount);
+			instructionTypeEntityWiseTradeAmount.forEach(this::printTradeAmountWiseRankingOfEntities);
+			System.out.println(tradeReportString);
+		}
 	}
 
 	/**

@@ -19,7 +19,7 @@ import com.trading.enums.CurrencyType;
 import com.trading.enums.InstructionType;
 import com.trading.model.TradeInstruction;
 
-public class SettlementsReportTest {
+public class TradeReportTest {
 
 	@Rule
 	public ExpectedException thrown = ExpectedException.none();

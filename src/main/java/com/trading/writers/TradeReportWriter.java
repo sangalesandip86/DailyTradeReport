@@ -11,6 +11,11 @@ import com.trading.enums.InstructionType;
  *
  */
 public interface TradeReportWriter {
+	/**
+	 * 
+	 * @param instructionTypeDateWiseTradeAmountMap
+	 * @param instructionTypeEntityWiseTradeAmount
+	 */
 	public void generateReport(Map<InstructionType, Map<LocalDate, Double>> instructionTypeDateWiseTradeAmountMap,
 			Map<InstructionType, Map<String, Double>> instructionTypeEntityWiseTradeAmount);
 }
