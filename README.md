@@ -27,14 +27,6 @@ This program has been developed and tested on windows platform only
 3. Assumed all fields are in required format, extensive validation is not done on input fields, we can implement validation later on all incoming fields.
 4. PricePerUnit, Units and agreedFx should be positive number.
 
-**Dependencies Used**
-1. Junit
-2. SLF4J
-
-**Plugins Used**
-1. Maven
-
-
 **Solution and Coding**
 1. Reader :
 	TradeInstructionReader interface to read data provided by client, Right now this application only provides text file specific implementation.
@@ -43,3 +35,9 @@ This program has been developed and tested on windows platform only
 3. Writer : 
 	TradeReportWriter provide public API to generateReport, this application right now only support Console specific ConsoleTradeReportWriter.
 	
+**Dependencies Used**
+1. Junit
+2. SLF4J
+
+**Plugins Used**
+1. Maven
